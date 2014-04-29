@@ -1,0 +1,165 @@
+Travel Begin:
+Day 1
+Travel Time: 0:12
+Fri 8:11
+Destination: Griffith Park
+Address: 4730 Crystal Springs Dr, Los Angeles, CA 90027
+Cost: 0.0
+Duration: 2.5
+Open Hours: 7:00-20:00
+Closed on: ['None']
+
+Travel Time: 0:16
+Fri 10:58
+Destination: Runyon Canyon Park
+Address: 2000 North Fuller Ave, Los Angeles, CA 90046
+Cost: 0.0
+Duration: 2.0
+Open Hours: 7:00-16:00
+Closed on: ['None']
+
+Travel Time: 0:04
+Fri 13:03
+Destination: Hollywood Walk of Fame
+Address: Hollywood Blvd at Vine St, Los Angeles, CA 90028
+Cost: 0.0
+Duration: 1.0
+Open Hours: 8:00-17:00
+Closed on: ['None']
+
+Travel Time: 0:10
+Fri 14:14
+Destination: Griffith Observatory
+Address: 2800 E. Observatory Rd., Los Angeles, CA 90027
+Cost: 0.0
+Duration: 1.5
+Open Hours: 12:00-22:00
+Closed on: ['Mon']
+
+Travel Time: 0:36
+Fri 16:20
+Destination: Santa Monica Bay
+Address: 322 Santa Monica Pier, Los Angeles, CA 90013
+Cost: 0.0
+Duration: 2.0
+Open Hours: 8:00-20:00
+Closed on: ['None']
+
+Travel Time: 0:19
+Fri 18:40
+Destination: Staples Center
+Address: 1111 S Figueroa Street, Los Angeles, CA 90015
+Cost: 120.0
+Duration: 2.5
+Open Hours: 10:00-21:30
+Closed on: ['None']
+
+Day  2
+Travel Time: 0:28
+Sat 8:28
+Destination: Will Rogers State Historic Park
+Address: 1501 Will Rogers State Park Road, Los Angeles, CA 90272
+Cost: 6.0
+Duration: 4.0
+Open Hours: 8:00-16:30
+Closed on: ['None']
+
+Travel Time: 0:16
+Sat 12:45
+Destination: The Getty Center
+Address: 1200 Getty Center Dr, Los Angeles, CA 90049
+Cost: 15.0
+Duration: 2.5
+Open Hours: 10:00-17:30
+Closed on: ['Mon']
+
+Travel Time: 0:22
+Sat 15:37
+Destination: Venice Canals Walkway
+Address: Washigton Blvd. & Dell Ave., Los Angeles, CA 90292
+Cost: 0.0
+Duration: 1.0
+Open Hours: 7:00-19:00
+Closed on: ['None']
+
+Day  3
+Travel Time: 0:40
+Sun 8:40
+Destination: Topanga State Park
+Address: 20829 Entrada Road, Los Angeles, CA 90290
+Cost: 0.0
+Duration: 4.0
+Open Hours: 7:00-16:00
+Closed on: ['None']
+
+Travel Time: 0:36
+Sun 13:16
+Destination: Los Angeles County Museum of Art
+Address: 5905 Wilshire Blvd, Los Angeles, CA 90036
+Cost: 15.0
+Duration: 2.0
+Open Hours: 11:00-17:00
+Closed on: ['Wed']
+
+Travel Time: 0:21
+Sun 15:37
+Destination: Hollywood Sign
+Address: 3204 Canyon Lake Drive, Los Angeles, CA 90068
+Cost: 0.0
+Duration: 0.5
+Open Hours: 8:00-17:00
+Closed on: ['None']
+
+Travel ended:  Sun   16:07  Spent:  156.0
+
+Destinations left: 
+
+Destination: Magic and Wine Tasting with David Minkin
+Address: 1737 North Vine Street, Hollywood, CA 90028
+Cost: 85.0
+Duration: 2.5
+Open Hours: 18:00-20:30
+Closed on: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sun']
+
+Destination: Universal Studios Hollywood
+Address: 100 Universal City Plaza, Los Angeles, CA 91608
+Cost: 85.0
+Duration: 10.0
+Open Hours: 8:00-20:00
+Closed on: ['None']
+
+Destination: Los Angeles Urban Adventures
+Address: 801 Hollywood Blvd., Los Angeles, CA 90028
+Cost: 70.0
+Duration: 3.0
+Open Hours: 9:30-15:00
+Closed on: ['None']
+
+Destination: Pacific Blue Air
+Address: 12101 Crenshaw Blvd, Los Angeles, CA 90250
+Cost: 290.0
+Duration: 1.0
+Open Hours: 6:00-21:30
+Closed on: ['Mon']
+
+Destination: Bike Tours Hollywood
+Address: 6672 Hollywood Blvd., Los Angeles, CA 90028
+Cost: 60.0
+Duration: 2.0
+Open Hours: 11:00-15:00
+Closed on: ['None']
+
+Destination: Walt Disney Concert Hall
+Address: 135 N. Grand Avenue, Los Angeles, CA 90012
+Cost: 0.0
+Duration: 1.0
+Open Hours: 9:00-17:00
+Closed on: ['None']
+
+Destination: Nethercutt Museum
+Address: 15151 Bledsoe St, Sylmar, Los Angeles, CA 91342
+Cost: 0.0
+Duration: 2.0
+Open Hours: 9:00-16:30
+Closed on: ['Mon', 'Sun']
+
