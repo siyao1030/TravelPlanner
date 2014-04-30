@@ -47,12 +47,9 @@ class TravelPlanner:
         self.endTime = endTime
         self.budgetLimit = budgetLimit
         self.interests = interests
-        #["Outdoor and Adventure", "Event and Amusment", "Culture and Landmarks"]
+        #["Outdoor and Adventure", "Event and Amusement", "Culture and Landmarks"]
 
-        #self.startDest = startDest
         self.destinations = self.getDestinations(destCSV)
-        #dest = next(x for x in self.destinations if x[0] == startDest)
-        #self.startDest = Destination(dest[0],dest[1],dest[2],dest[3],dest[4],dest[5],dest[6],dest[7],dest[8],dest[9])
         self.travelMatrix = self.getTravelMatrix(timeCSV, distCSV)
 
         self.currentTime = startTime
@@ -84,7 +81,6 @@ class TravelPlanner:
         return travelMatrix
 
     def getTravelTime(self, destA, destB):
-        #print destA, destB
         return float(self.travelMatrix[(destA.name,destB.name)][0])
 
 
@@ -99,6 +95,29 @@ class TravelPlanner:
             data[i][7]=data[i][7].split(",")
         return data
 
+    def constraint(self,dest):
+        travelTime = self.getTravelTime(self.currentDest, dest)
+        maxWaitTime = 0.5
+        if self.currentTime+travelTime + maxWaitTime < dest.openHour:
+            #print "not open"
+            return False
+        if self.currentTime+travelTime + dest.duration > dest.closeHour:
+            #print "closed" 
+            return False
+        if self.currentDay in dest.closedDays: 
+            #print "closed on ", planner.currentDay
+            return False
+        if self.moneySpent+dest.cost > self.budgetLimit:
+            #print "exceed budget" 
+            return False
+        if dest.category not in self.interests:
+            #print "not interested" 
+            return False
+        if self.daysTraveled > self.lengthOfTravel:
+            #print "exceed lengthOfTravel"
+            return False
+
+        return True
 
     def getPriorityScore(self, destB, costWeight = 2, funWeight = 0.3, timeWeight = 1, durationWeight = 1):
         score = 10
@@ -112,7 +131,10 @@ class TravelPlanner:
         score -= (travelTime+timeWasted)/destB.duration * timeWeight
 
         timeLeft = self.endTime-self.currentTime
-        score -= (travelTime+timeWasted)/timeLeft * timeWeight
+        if timeLeft == 0:
+            score -= 1
+        else:
+            score -= (travelTime+timeWasted)/timeLeft * timeWeight
         # duration
         actualDuration = min(destB.closeHour - (self.currentTime+travelTime),destB.duration)
         score += actualDuration/destB.duration * durationWeight
@@ -137,22 +159,27 @@ class TravelPlanner:
                     print "Day ", self.daysTraveled+1
                 return
 
-    #def printResult():
 
 class Assignment(object):
-    def __init__(self, dest, currentDay ,currentTime, currentMoney,travelTime):
+    def __init__(self, currentDay, currentTime, currentMoney, dest=None, travelTime=0, mealbreak=False):
         self.dest = dest
         self.currentDay = currentDay
         self.currentTime = currentTime
         self.currentMoney = currentMoney
         self.travelTime = travelTime
+        if (mealbreak):
+            self.mealbreak = 1.5
+        else:
+            self.mealbreak = 0
 
     def __repr__(self):
         s = "Travel Time: "+ convertTime(self.travelTime) + "\n"
         s += self.currentDay + " "+ convertTime(self.currentTime) #+ " Spent: "+ str(self.currentMoney) + "\n"
         s += "\n" + str(self.dest)
-        #return s
-        return self.dest.name
+        if self.mealbreak > 0:
+            s+= "Take a " + str(self.mealbreak)+ " hour break, and have a delicious meal nearby! \n"
+        return s
+        #return self.dest.name
         
 
 class Problem:
@@ -174,8 +201,7 @@ class Problem:
     def addConstraint(self,constraint):
         self.constraints.append(constraint)
 
-    def isComplete(self,assignment):
-        #print "assignment num: ", len(assignment)
+    def isComplete(self):
         if (self.planner.moneySpent >= self.planner.budgetLimit):
             return True
         if (self.planner.daysTraveled >= self.planner.lengthOfTravel):
@@ -194,25 +220,32 @@ class Problem:
 
 
     def solve(self):
+        #print "solving"
+        lunchTime = 12
+        dinnerTime = 6
         assignment = []
-        if (self.isComplete(assignment)):
+        if (self.isComplete()):
             return assignment
         #select variable based on priority
         sortedVariables = sorted(self.variables, cmp = self.compPriority)
-        #print "new iteration, variables left", len(self.variables) ,  "sortedV ", len(sortedVariables)
-
         while len(sortedVariables) >0:
-            
             nextDest = sortedVariables[0]
             if self.satisfyConstraints(nextDest):
-                #print "satisfied! ", nextDest.name
                 self.variables.remove(nextDest)
                 travelTime = self.planner.getTravelTime(self.planner.currentDest,nextDest)
-                self.planner.currentTime+=travelTime
-                newAssign = Assignment(nextDest, self.planner.currentDay, self.planner.currentTime, self.planner.moneySpent,travelTime)
+                endTime = self.planner.currentTime+travelTime+nextDest.duration
+                mealbreak = False
+                if lunchTime>=self.planner.currentTime and lunchTime<=endTime:
+                    mealbreak = True
+                elif dinnerTime>=self.planner.currentTime and dinnerTime<=endTime:
+                    mealbreak = True
+
+                newAssign = Assignment(self.planner.currentDay, self.planner.currentTime, self.planner.moneySpent, nextDest, travelTime,mealbreak)
                 assignment.append(newAssign)
 
                 # updating planner status
+                if mealbreak == True:
+                    self.planner.currentTime+=1.5
                 self.planner.currentTime+=nextDest.duration
                 if (self.planner.currentTime > self.planner.endTime):
                     self.planner.incrementDay()
@@ -221,64 +254,59 @@ class Problem:
 
                 return assignment + self.solve()
             else:
-                #print "did not satisfy, removing ", nextDest.name
                 sortedVariables.remove(nextDest)
-                #print "after removing ", len(sortedVariables), " left"
             
-        #print "should be returning, ", len(sortedVariables)
         return assignment
 
 
-
-
-planner = TravelPlanner("Fri", 3, 8, 22, 200, ["Outdoor and Adventure", "Culture and Landmarks"], "Griffith Park", 'data.csv', 'distance.csv', 'time.csv')
-
-def constraint(dest):
-    travelTime = planner.getTravelTime(planner.currentDest, dest)
-    maxWaitTime = 0.5
-    if planner.currentTime+travelTime + maxWaitTime < dest.openHour:
-        #print "not open"
-        return False
-    if planner.currentTime+travelTime + dest.duration > dest.closeHour:
-        #print "closed" 
-        return False
-    if planner.currentDay in dest.closedDays: 
-        #print "closed on ", planner.currentDay
-        return False
-    if planner.moneySpent+dest.cost > planner.budgetLimit:
-        #print "exceed budget" 
-        return False
-    if dest.category not in planner.interests:
-        #print "not interested" 
-        return False
-    if planner.daysTraveled > planner.lengthOfTravel:
-        #print "exceed lengthOfTravel"
-        return False
-
-    return True
-
-
 def shouldEndTravel(problem):
-    if (planner.moneySpent >= planner.budgetLimit):
+    if (problem.planner.moneySpent >= problem.planner.budgetLimit):
         return True
-    if (planner.daysTraveled >= planner.lengthOfTravel):
+    if (problem.planner.daysTraveled >= problem.planner.lengthOfTravel):
         return True
     if (len(problem.variables)==0):
         return True
 
     return False
 
+
+def input():
+    lengthOfTravel = int(raw_input("How many days do you plan to travel? "))
+    startDay = raw_input("What week day do you plan to begin travelling? ")
+    #startTime = int(raw_input("At what time do you want to start travelling? "))
+    #endTime = int(raw_input("At what time do you want to return home? "))
+    budgetLimit = int(raw_input("What is your budget limit? "))
+
+    interests = []
+    temp = raw_input("Are you interested in Outdoor and Adventure? ")
+    if (temp == "yes" or temp =="y"):
+        interests.append("Outdoor and Adventure")
+    temp = raw_input("Are you interested in Events and Amusement? ")
+    if (temp == "yes" or temp =="y"):
+        interests.append("Events and Amusement")
+    temp = raw_input("Are you interested in Culture and Landmarks? ")
+    if (temp == "yes" or temp =="y"):
+        interests.append("Culture and Landmarks")
+
+    return TravelPlanner(startDay,lengthOfTravel,8,22,budgetLimit,interests,"Hotel",'data.csv', 'distance.csv', 'time.csv')
+
+    
+
 def main():
+    #Default:
+    #planner = TravelPlanner("Fri",3,8,22,200,["Outdoor and Adventure", "Event and Amusement", "Culture and Landmarks"],"Hotel",'data.csv', 'distance.csv', 'time.csv')
+
+    planner = input()
     problem = Problem(planner)
     for i in range(1,len(planner.destinations)):
         dest = planner.destinations[i]
         newDest = Destination(dest[0],dest[1],dest[2],dest[3],dest[4],dest[5],dest[6],dest[7],dest[8],dest[9])
         problem.addVariable(newDest)
-    problem.addConstraint(constraint)
+    problem.addConstraint(planner.constraint)
 
-    print "Travel Begin:"
-    print "Day 1"
     solutions = problem.solve()
+    print "\nTravel Begin:"
+    print "Day 1"
     for assignment in solutions:
         print assignment
 
@@ -288,18 +316,19 @@ def main():
         for assignment in newAssign:
             print assignment
         solutions+=newAssign
-        #print solutions
 
-    #for assignment in solutions:
-     #   print assignment
-    #print solutions
     last = solutions[-1]
 
-    print "Travel ended: " ,last.currentDay, " ", convertTime(last.currentTime+last.dest.duration), " Spent: ", last.currentMoney
+    print "Travel ended: " ,last.currentDay, " ", convertTime(last.currentTime+last.dest.duration+last.mealbreak), " Spent: ", last.currentMoney
 
     print "\nDestinations left: \n"
     for dest in problem.variables:
         print dest
+
+
+    
+
+    return
 
 if __name__ == "__main__":
     main()
